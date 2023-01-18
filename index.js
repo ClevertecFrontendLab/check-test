@@ -55,6 +55,7 @@ const main = async () => {
 
         const createTestsResultMessage = () => {
             screenshots.forEach(({ url }) => {
+                url = url.replace(/\s+/g,'%20');
                 tests_result_message += `![Скриншот автотестов](https://static.cleverland.by${url})` + '\n';
             });
 
