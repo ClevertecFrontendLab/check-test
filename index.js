@@ -4,12 +4,6 @@ const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
 
-const getIsFirstPush =(created, updated)=> {
-    if(created === updated) {
-      return true;
-    } else return false
-  };
-
 const main = async () => {
     try {
         const owner = core.getInput('owner', { required: true });
@@ -85,7 +79,8 @@ const main = async () => {
                 link: pull_request_info.html_url, 
                 github: pull_request_info.user.login,
                 isTestsSuccess: pass_percent_tests >= minimum_required_result,
-                isFirstPush: getIsFirstPush(pull_request_info.created_at, pull_request_info.updated_at),
+                isFirstPush: new Date(pull_request_info.updated_at) - new Date(pull_request_info.created_at) < 300000,
+                // если разница между обновлением пр и созданием пр меньше 5 минут
             },
         };
 
