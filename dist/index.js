@@ -16553,7 +16553,7 @@ const main = async () => {
             const { stats: { tests, failures, passPercent } } = JSON.parse(data);
             pass_percent_tests = passPercent;
 
-            tests_result_message = '#  Результаты тестов' + '\n' + `Процент пройденных тестов: ${passPercent}%.` + '\n' + `Общее количество тестов: ${tests}.` + '\n' + `Количество непройденных тестов: ${failures}.` + '\n';
+            tests_result_message = '#  Результаты тестов' + '\n' + `Процент пройденных тестов: ${Math.trunc(passPercent)}%.` + '\n' + `Общее количество тестов: ${tests}.` + '\n' + `Количество непройденных тестов: ${failures}.` + '\n';
         });
 
         const { data: pull_request_info } = await octokit.rest.pulls.get({
