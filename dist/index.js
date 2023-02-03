@@ -16540,15 +16540,12 @@ const main = async () => {
         const repo = core.getInput('repo', { required: true });
         const pull_number = core.getInput('pull_number', { required: true });
         const token = core.getInput('token', { required: true });
-        const base_url = 'https://training.cleverland.by';
+        const base_url = core.getInput('host', { required: false }) || 'https://training.cleverland.by';
         const path_to_tests_report = 'cypress/report/report.json';
         const path_to_test_file_name = 'cypress/e2e';
-        const minimum_required_result = 60;
+        const minimum_required_result = 80;
         let tests_result_message = '';
         let pass_percent_tests = 0;
-        const base_url_test = core.getInput('host', { required: false }) || 'https://training.cleverland.by';
-
-        console.log('fuck', base_url_test);
 
         const octokit = new github.getOctokit(token);
 
@@ -16610,8 +16607,7 @@ const main = async () => {
 
         const reviewers = [...new Set(list_review_comments.map(({ user }) => user.login))];
         const isFirstPush = new Date(pull_request_info.updated_at) - new Date(pull_request_info.created_at) < 300000; // если разница между обновлением пр и созданием пр меньше 5 минут
-        console.log('isFirstPush', isFirstPush);
-        console.log('reviewers', reviewers);
+
         const tests_result_request_config = {
             method: 'post',
             url: `${base_url}/pull-request/opened`,
