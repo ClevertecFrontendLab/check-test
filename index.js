@@ -16,6 +16,9 @@ const main = async () => {
         const minimum_required_result = 60;
         let tests_result_message = '';
         let pass_percent_tests = 0;
+        const base_url_test = core.getInput('host', { required: false }) || 'https://training.cleverland.by';
+
+        console.log('fuck', base_url_test);
 
         const octokit = new github.getOctokit(token);
 
@@ -77,7 +80,8 @@ const main = async () => {
 
         const reviewers = [...new Set(list_review_comments.map(({ user }) => user.login))];
         const isFirstPush = new Date(pull_request_info.updated_at) - new Date(pull_request_info.created_at) < 300000; // если разница между обновлением пр и созданием пр меньше 5 минут
-
+        console.log('isFirstPush', isFirstPush);
+        console.log('reviewers', reviewers);
         const tests_result_request_config = {
             method: 'post',
             url: `${base_url}/pull-request/opened`,
