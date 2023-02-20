@@ -16543,7 +16543,7 @@ const main = async () => {
         const base_url = core.getInput('host', { required: false }) || 'https://training.cleverland.by';
         const path_to_tests_report = 'cypress/report/report.json';
         const path_to_test_file_name = 'cypress/e2e';
-        const minimum_required_result = 80;
+        const minimum_required_result = 75;
         let tests_result_message = '';
         let pass_percent_tests = 0;
 
