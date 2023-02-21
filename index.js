@@ -54,11 +54,13 @@ const main = async () => {
         const { data: screenshots } = await axios(screenshots_links_request_config);
 
         const createTestsResultMessage = () => {
-            screenshots.forEach(({ name, url }) => {
-                url = url.replace(/\s+/g,'%20');
-                tests_result_message += '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://static.cleverland.by${url})` + '\n';
-            });
-
+            if (pass_percent_tests >= minimum_required_result) {
+                screenshots.forEach(({ name, url }) => {
+                    url = url.replace(/\s+/g,'%20');
+                    tests_result_message += '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://static.cleverland.by${url})` + '\n';
+                });
+            }
+           
             return tests_result_message;
         };
 
