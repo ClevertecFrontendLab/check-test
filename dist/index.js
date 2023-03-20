@@ -16543,7 +16543,8 @@ const main = async () => {
         const base_url = core.getInput('host', { required: false }) || 'https://training.cleverland.by';
         const path_to_tests_report = 'cypress/report/report.json';
         const path_to_test_file_name = 'cypress/e2e';
-        const minimum_required_result = 84;
+        const minimum_required_result = 97;
+        const minimum_result_to_send_screenshots = 87;
         let tests_result_message = '';
         let pass_percent_tests = 0;
 
@@ -16584,7 +16585,7 @@ const main = async () => {
         const { data: screenshots } = await axios(screenshots_links_request_config);
 
         const createTestsResultMessage = () => {
-            if (pass_percent_tests >= minimum_required_result) {
+            if (pass_percent_tests >= minimum_result_to_send_screenshots) {
                 screenshots.forEach(({ name, url }) => {
                     url = url.replace(/\s+/g,'%20');
                     tests_result_message += '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://static.cleverland.by${url})` + '\n';
