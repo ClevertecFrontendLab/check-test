@@ -16588,7 +16588,7 @@ const main = async () => {
             if (pass_percent_tests >= minimum_result_to_send_screenshots) {
                 screenshots.forEach(({ name, url }) => {
                     url = url.replace(/\s+/g,'%20');
-                    tests_result_message += '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://static.cleverland.by${url})` + '\n';
+                    tests_result_message += '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://training.clevertec.ru${url})` + '\n';
                 });
             }
            
