@@ -58,6 +58,9 @@ const main = async () => {
             if (pass_percent_tests >= minimum_result_to_send_screenshots) {
                 screenshots.forEach(({ name, url }) => {
                     url = url.replace(/\s+/g,'%20');
+                    console.log('*********************************');
+                    console.log(`https://training.clevertec.ru${url}`);
+                    console.log('*********************************');
                     tests_result_message += '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://training.clevertec.ru${url})` + '\n';
                 });
             }
