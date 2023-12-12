@@ -16587,11 +16587,15 @@ const main = async () => {
         const createTestsResultMessage = () => {
             if (pass_percent_tests >= minimum_result_to_send_screenshots) {
                 screenshots.forEach(({ name, url }) => {
+                    console.log('name', name);
+                    console.log('url', url);
                     url = url.replace(/\s+/g,'%20');
-                    console.log('*********************************');
-                    console.log(`https://training.clevertec.ru${url}`);
-                    console.log('*********************************');
+                    console.log(`***https://training.clevertec.ru${url}***`);
+                    console.log(`***ttps://training.clevertec.ru${url}***`);
+                    console.log(`**![Скриншот автотестов](https://training.clevertec.ru${url})***`);
+                    console.log(`![Скриншот автотестов](https://training.clevertec.ru${url})`);
                     tests_result_message += '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://training.clevertec.ru${url})` + '\n';
+                    console.log(`111***${tests_result_message}***111`);
                 });
             }
            
