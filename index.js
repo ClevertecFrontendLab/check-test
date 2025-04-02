@@ -1,11 +1,8 @@
-//@ts-check
 const core = require('@actions/core');
 const github = require('@actions/github');
 const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
-const sharp = require('sharp'); 
-const path = require('path');
 
 const API_URL = 'https://training.clevertec.ru';
 
@@ -23,66 +20,39 @@ const main = async () => {
     let tests_result_message = '';
     let pass_percent_tests = 0;
 
-    const octokit = github.getOctokit(token);
+    const octokit = new github.getOctokit(token);
 
-    const data = await new Promise((resolve, reject) => {
-      fs.readFile(path_to_tests_report, 'utf8', (err, data) => {
-        if (err) reject(err);
-        else resolve(JSON.parse(data));
-      });
+    fs.readFile(path_to_tests_report, 'utf8', (err, data) => {
+      const {
+        stats: { tests, failures, passPercent },
+      } = JSON.parse(data);
+      pass_percent_tests = passPercent;
+
+      tests_result_message =
+        '#  Результаты тестов' +
+        '\n' +
+        `Процент пройденных тестов: ${Math.trunc(passPercent)}%.` +
+        '\n' +
+        `Общее количество тестов: ${tests}.` +
+        '\n' +
+        `Количество непройденных тестов: ${failures}.` +
+        '\n';
     });
-
-    const {
-      stats: { tests, failures, passPercent },
-    } = data;
-    pass_percent_tests = passPercent;
-
-    tests_result_message =
-      '# Результаты тестов' +
-      '\n' +
-      `Процент пройденных тестов: ${Math.trunc(passPercent)}%.` +
-      '\n' +
-      `Общее количество тестов: ${tests}.` +
-      '\n' +
-      `Количество непройденных тестов: ${failures}.` +
-      '\n';
 
     const { data: pull_request_info } = await octokit.rest.pulls.get({
       owner,
       repo,
-      pull_number: Number(pull_number),
+      pull_number,
     });
 
     const test_file_name = fs.readdirSync(path_to_test_file_name)[0];
     const path_to_tests_screenshots = `cypress/report/screenshots/${test_file_name}`;
-    const temp_dir = 'cypress/report/screenshots/temp'; // Временная папка для сжатых файлов
-
-    // Создаем временную папку, если ее нет
-    if (!fs.existsSync(temp_dir)) {
-      fs.mkdirSync(temp_dir, { recursive: true });
-    }
-
-    // Сжимаем скриншоты с помощью sharp
-    const screenshotFiles = fs.readdirSync(path_to_tests_screenshots);
-    const compressedScreenshots = await Promise.all(
-      screenshotFiles.map(async (screenshot) => {
-        const originalPath = path.join(path_to_tests_screenshots, screenshot);
-        const compressedPath = path.join(temp_dir, screenshot.replace('.png', '.jpg')); // Меняем на .jpg
-
-        await sharp(originalPath)
-          .jpeg({ quality: 70 }) // Сжимаем до JPEG с качеством 70%
-          .toFile(compressedPath);
-
-        return compressedPath;
-      })
-    );
 
     const formData = new FormData();
     formData.append('github', pull_request_info.user.login);
 
-    // Добавляем сжатые скриншоты в FormData
-    compressedScreenshots.forEach((compressedPath) => {
-      formData.append('files', fs.createReadStream(compressedPath));
+    fs.readdirSync(path_to_tests_screenshots).forEach((screenshot) => {
+      formData.append('files', fs.createReadStream(`${path_to_tests_screenshots}/${screenshot}`));
     });
 
     const screenshots_links_request_config = {
@@ -101,12 +71,7 @@ const main = async () => {
         screenshots.forEach(({ name, url }) => {
           url = url.replace(/\s+/g, '%20');
           tests_result_message +=
-            '***' +
-            '\n' +
-            `**${name}**` +
-            '\n' +
-            `![Скриншот автотестов](https://static.clevertec.ru${url})` +
-            '\n';
+            '***' + '\n' + `**${name}**` + '\n' + `![Скриншот автотестов](https://static.clevertec.ru${url})` + '\n';
         });
       }
 
@@ -116,7 +81,7 @@ const main = async () => {
     await octokit.rest.issues.createComment({
       owner,
       repo,
-      issue_number: Number(pull_number),
+      issue_number: pull_number,
       body: createTestsResultMessage(),
     });
 
@@ -135,9 +100,6 @@ const main = async () => {
     };
 
     await axios(tests_result_request_config);
-
-    // Опционально: удаляем временную папку после отправки
-    fs.rmSync(temp_dir, { recursive: true, force: true });
   } catch (error) {
     console.log(error);
     core.setFailed(error.message);
