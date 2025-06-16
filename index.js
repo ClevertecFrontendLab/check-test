@@ -18,8 +18,8 @@ const main = async () => {
     const base_url = core.getInput('host', { required: false }) || API_URL;
     const path_to_tests_report = 'cypress/report/report.json';
     const path_to_test_file_name = 'cypress/e2e';
-    const minimum_required_result = 94;
-    const minimum_result_to_send_screenshots = 94;
+    const minimum_required_result = 100;
+    const minimum_result_to_send_screenshots = 100;
     let tests_result_message = '';
     let pass_percent_tests = 0;
 
